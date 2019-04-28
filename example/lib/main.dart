@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _appendList(page) {
-    this._paginator.get(page: page);
+    this._paginator.getNext();
   }
 
   ListView _buildList() {

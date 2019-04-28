@@ -47,7 +47,7 @@ class Paginator {
     var links = parsed['link'];
 
     return new PaginatedResponse(
-      Map.from(data),
+      data,
       links['url'] as String,
       meta['current_page'] as int,
       meta['per_page'] as int,
@@ -60,4 +60,4 @@ class PaginatorException implements Exception {
   final String message;
 
   PaginatorException(this.message);
-};
+}
