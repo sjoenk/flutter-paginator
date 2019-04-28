@@ -9,7 +9,6 @@ class Paginator {
   String url;
   int currentPage = 0;
   bool nextExists = true;
-  Map items;
 
   Paginator(this.url);
 
@@ -18,6 +17,9 @@ class Paginator {
     if (false == this.nextExists) {
       throw new PaginatorException('No more items');
     }
+
+    String x = this._getUrl();
+    print(x);
 
     var response = await http.get(this._getUrl());
 
@@ -31,12 +33,13 @@ class Paginator {
 
   ///
   String _getUrl() {
-    Uri uri = Uri.dataFromString(this.url);
+    int nextPage = currentPage + 1;
 
-    // We override the page with the expected value.
-    uri.queryParameters['page'] = (this.currentPage + 1).toString();
+    if (this.url.contains('?')) {
+      return this.url + '&page=' + nextPage.toString();
+    }
 
-    return uri.toString();
+    return this.url + '?page=' + nextPage.toString();
   }
 
   ///
@@ -44,7 +47,7 @@ class Paginator {
     var parsed = json.decode(response.body);
     var meta = parsed['meta'];
     var data = parsed['data'];
-    var links = parsed['link'];
+    var links = parsed['links'];
 
     return new PaginatedResponse(
       data,
