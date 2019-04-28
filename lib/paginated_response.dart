@@ -1,5 +1,5 @@
 class PaginatedResponse {
-  final Map<dynamic, dynamic> data;
+  final List<dynamic> data;
   final String url;
   final int page;
   final int perPage;
