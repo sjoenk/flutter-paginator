@@ -7,45 +7,34 @@ import 'package:http/http.dart' as http;
 ///
 class Paginator {
   String url;
-  int currentPage = 0;
-  bool nextExists = true;
 
   Paginator(this.url);
 
   /// Get the next paginated response by [pageIndex].
-  ///
-  /// Throws an [PaginatorException] the next page doesn't exist
-  Future<PaginatedResponse> getNext({int pageIndex}) async {
-    if (false == this.nextExists) {
-      throw new PaginatorException('No more items');
-    }
-
-    if (pageIndex == null) {
-      pageIndex = currentPage++;
+  /// Throws a [PaginatorException] if the next page doesn't exist
+  Future<PaginatedResponse> page({int page}) async {
+    if (page == null) {
+      page = currentPage++;
     } else {
-      currentPage = pageIndex;
+      currentPage = page;
     }
 
-    String x = this._getUrl(pageIndex: pageIndex);
-    print(x);
-
-    var response = await http.get(this._getUrl(pageIndex: pageIndex));
+    var response = await http.get(
+      _getUrl(page),
+    );
 
     PaginatedResponse paginatedResponse = _parseResponse(response);
-
-    this.currentPage = paginatedResponse.page;
-    this.nextExists = paginatedResponse.page < paginatedResponse.lastPage;
 
     return paginatedResponse;
   }
 
   ///
-  String _getUrl({int pageIndex}) {
-    if (this.url.contains('?')) {
-      return this.url + '&page=' + pageIndex.toString();
+  String _getUrl(int page) {
+    if (url.contains('?')) {
+      return url + '&page=' + page.toString();
     }
 
-    return this.url + '?page=' + pageIndex.toString();
+    return url + '?page=' + page.toString();
   }
 
   ///
