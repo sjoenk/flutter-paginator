@@ -10,15 +10,9 @@ class Paginator {
 
   Paginator(this.url);
 
-  /// Get the next paginated response by [pageIndex].
+  /// Get the next paginated response by [page].
   /// Throws a [PaginatorException] if the next page doesn't exist
-  Future<PaginatedResponse> page({int page}) async {
-    if (page == null) {
-      page = currentPage++;
-    } else {
-      currentPage = page;
-    }
-
+  Future<PaginatedResponse> page(int page) async {
     var response = await http.get(
       _getUrl(page),
     );
