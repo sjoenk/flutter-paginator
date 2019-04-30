@@ -55,22 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Get the first paginated response
-  Future<void> _getFirstPage() async {
-    if (_firstPaginatedResponse == null) {
-      _firstPaginatedResponse = await _paginator.page(1);
-    }
-
-    return _firstPaginatedResponse.data;
-  }
-
   /// Get paginated response by index
   Future<void> _getPage(int page) async {
-    if (page == 0) {
-      return _getFirstPage();
-    }
+    PaginatedResponse paginatedResponse = await _paginator.page(page);
 
-    PaginatedResponse paginatedResponse = await _paginator.page(page + 1);
+    if (null == _firstPaginatedResponse) {
+      _firstPaginatedResponse = paginatedResponse;
+    }
 
     return paginatedResponse.data;
   }
@@ -92,6 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return ListView.builder(
       itemCount: _firstPaginatedResponse.lastPage,
       itemBuilder: (BuildContext context, int page) {
+        // We must add a page as this starts with "0".
+        page++;
+        
+        print(page);
+
         // Use KeepAliveFutureBuilder to prevent the
         // ListView builder from disposing the older pages
         return KeepAliveFutureBuilder(
