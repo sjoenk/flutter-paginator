@@ -12,16 +12,24 @@ class Paginator {
 
   Paginator(this.url);
 
-  /// Get the next paginated response (or throw an exception).
-  Future<PaginatedResponse> getNext() async {
+  /// Get the next paginated response by [pageIndex].
+  ///
+  /// Throws an [PaginatorException] the next page doesn't exist
+  Future<PaginatedResponse> getNext({int pageIndex}) async {
     if (false == this.nextExists) {
       throw new PaginatorException('No more items');
     }
 
-    String x = this._getUrl();
+    if (pageIndex == null) {
+      pageIndex = currentPage++;
+    } else {
+      currentPage = pageIndex;
+    }
+
+    String x = this._getUrl(pageIndex: pageIndex);
     print(x);
 
-    var response = await http.get(this._getUrl());
+    var response = await http.get(this._getUrl(pageIndex: pageIndex));
 
     PaginatedResponse paginatedResponse = _parseResponse(response);
 
@@ -32,14 +40,12 @@ class Paginator {
   }
 
   ///
-  String _getUrl() {
-    int nextPage = currentPage + 1;
-
+  String _getUrl({int pageIndex}) {
     if (this.url.contains('?')) {
-      return this.url + '&page=' + nextPage.toString();
+      return this.url + '&page=' + pageIndex.toString();
     }
 
-    return this.url + '?page=' + nextPage.toString();
+    return this.url + '?page=' + pageIndex.toString();
   }
 
   ///
