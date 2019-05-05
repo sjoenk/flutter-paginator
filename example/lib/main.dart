@@ -28,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PaginatedResponse _firstPaginatedResponse;
 
   final Paginator _paginator = Paginator(
-    'https://spearhead.hoeijmakers.me/api/v1/moniekvandepas.com/post',
+    Uri.parse('https://spearhead.hoeijmakers.me/api/v1/moniekvandepas.com/post'),
   );
 
   /// On initialize, get the first page and update the state
@@ -85,8 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
       itemBuilder: (BuildContext context, int page) {
         // We must add a page as this starts with "0".
         page++;
-        
-        print(page);
 
         // Use KeepAliveFutureBuilder to prevent the
         // ListView builder from disposing the older pages
