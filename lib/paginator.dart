@@ -6,15 +6,17 @@ import 'package:http/http.dart' as http;
 
 ///
 class Paginator {
-  String url;
+  Uri _uri;
 
-  Paginator(this.url);
+  Paginator(Uri uri) {
+    this._uri = _cleanUri(uri);
+  }
 
   /// Get the next paginated response by [page].
   /// Throws a [PaginatorException] if the next page doesn't exist
   Future<PaginatedResponse> page(int page) async {
     var response = await http.get(
-      _getUrl(page),
+      _getUri(page),
     );
 
     PaginatedResponse paginatedResponse = _parseResponse(response);
@@ -23,12 +25,23 @@ class Paginator {
   }
 
   ///
-  String _getUrl(int page) {
-    if (url.contains('?')) {
-      return url + '&page=' + page.toString();
-    }
+  Uri _getUri(int page) {
+    Map<String, dynamic> query = Map.from(_uri.queryParameters);
 
-    return url + '?page=' + page.toString();
+    query['page'] = page.toString();
+
+    return _uri.replace(
+      queryParameters: query
+    );
+  }
+
+  Uri _cleanUri(uri) {
+    Map<String, dynamic> query = Map.from(uri.queryParameters);
+
+    /// Remove any page parameters from the Uri.
+    query.remove('page');
+
+    return uri.replace(queryParameters: query);
   }
 
   ///
